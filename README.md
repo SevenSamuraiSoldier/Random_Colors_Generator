@@ -6,6 +6,6 @@ Feature:
 
 Check the application on the following link:
 
-https://sevensamuraisoldier.github.io/random_colors_generator/
+https://sevensamuraisoldier.github.io/Random_Colors_Generator/
 
 
