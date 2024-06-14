@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Random Colors Generator</title>
+  <meta charset="UTF-8" />
+  <meta name="Code Snippets Manager" content="Single Page App" />
+  <link rel="icon" type="image/png" href="flavicon.png">
+  <meta name="keywords" content="HTML, CSS, JavaScript" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <style>
+    body{
+      background-color: #fff2e5;
+    }
+
+
+    #user-input-div {
+      margin: 0;
+      margin-bottom: 1em;
+
+    }
+    .header-div {
+      display: flex;
+      grid-template-columns: auto;
+      flex-direction: row;
+      flex-wrap: nowrap;
+      align-content: center;
+      justify-content: center;
+      align-items: center;
+    }
+    #first-header {
+      margin: 10px;
+      color: #914040;
+    }
+    #row1,
+    #column1 {
+
+      color: #914040;
+    }
+
+    .color-wrapper {
+      width: auto;
+      height: 100px;
+      border: 1px solid #b5b3b3;
+      display: inline-block;
+      margin: 0;
+      position: relative;
+      border-radius:0.3em;
+    }
+    .color-wrapper::after {
+      content: "Copy";
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      opacity: 0;
+      transition: opacity 0.2s ease;
+    }
+    .color-wrapper:hover::after {
+      opacity: 1;
+    }
+    .color-wrapper:hover {
+      opacity: 65%;
+    }
+
+    .color-label {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      width: 100%;
+      background-color: rgba(255, 255, 255, 0.7);
+      text-align: center;
+      font-size: 12px;
+      padding: 2px 0;
+    }
+
+    .copy-button {
+      position: absolute;
+      top: 0;
+      right: 0;
+      width:80%;
+      height:80%;
+      background-color: transparent;
+      border: none;
+      padding: 2px 5px;
+      font-size: 12px;
+      cursor: pointer;
+      z-index: 1;
+    }
+
+    .color-grid {
+      display: grid;
+      grid-template-columns: repeat(var(--columns), 1fr);
+      grid-template-rows: repeat(var(--rows), 1fr);
+      grid-gap: 10px;
+      justify-content: center;
+      align-items: center;
+    }
+
+    #page-color-picker,
+    #header-color-picker,
+    .color-picker {
+      -webkit-appearance: none; /* Remove default appearance */
+      -moz-appearance: none;
+      appearance: none;
+      width: 2em; /* Set the size of the color picker */
+      height: 2em;
+      border:0.2em;
+      border-radius: 50%; /* Make the color picker circular */
+      background-color: transparent; /* Make the background transparent */
+      cursor: pointer; /* Change the cursor to a pointer */
+      
+    }
+    #page-color-picker::-webkit-color-swatch-wrapper,
+    #header-color-picker::-webkit-color-swatch-wrapper,
+    .color-picker::-webkit-color-swatch-wrapper {
+      border-radius: 50%; /* Make the color swatch circular */
+    }
+
+    #page-color-picker::-webkit-color-swatch,
+    #header-color-picker::-webkit-color-swatch,
+    .color-picker::-webkit-color-swatch {
+      border-radius: 50%; /* Make the color swatch circular */
+    }
+
+
+
+  </style>
+</head>
+<body>
+  
+
+  <div class="header-div">
+    <h1 id="first-header">Random Colors Generator</h1>
+    <input type="color" id="header-color-picker" value="#914040">
+    <div class="page-color-picker" id="page-color-picker2">
+      <input type="color" id="page-color-picker" value="#fff2e5">
+    </div>
+
+  </div>
+  
+
+  <div id="user-input-div">
+    <label for="rows" id="row1" style="font-weight:normal;">Rows: </label>
+    <input type="number" id="rows" value="4" min="1" max="30">
+    <label for="columns" id="column1" style="font-weight:normal;">Columns: </label>
+    <input type="number" id="columns" value="4" min="1" max="100">
+    <button id="generate-colors" style="font-weight:normal;">Generate Colors</button>
+  </div>
+
+  <div id="color-pickers" class="color-grid"></div>
+
+  <script>
+    const colorPickerContainer = document.getElementById('color-pickers');
+    const rowsInput = document.getElementById('rows');
+    const columnsInput = document.getElementById('columns');
+    const generateButton = document.getElementById('generate-colors');
+
+    function createColorPickers() {
+      const rows = parseInt(rowsInput.value);
+      const columns = parseInt(columnsInput.value);
+
+      colorPickerContainer.innerHTML = '';
+      colorPickerContainer.style.setProperty('--rows', rows);
+      colorPickerContainer.style.setProperty('--columns', columns);
+
+      for (let i = 0; i < rows * columns; i++) {
+        // Create a new color input element
+        const colorInput = document.createElement('input');
+        colorInput.type = 'color';
+        colorInput.classList.add('color-picker');
+        colorInput.value = '#' + Math.floor(Math.random() * 16777215).toString(16);
+
+        // Create a new color wrapper element
+        const colorWrapper = document.createElement('div');
+        colorWrapper.classList.add('color-wrapper');
+        colorWrapper.style.backgroundColor = colorInput.value;
+        
+        // Create a new label element
+        const colorLabel = document.createElement('div');
+        colorLabel.classList.add('color-label');
+        colorLabel.textContent = colorInput.value;
+
+        // Create a new copy button element
+        const copyButton = document.createElement('button');
+        copyButton.classList.add('copy-button');
+        copyButton.textContent = '';
+        copyButton.title = "Copy";
+        copyButton.addEventListener('click', async () => {
+          try {
+            await navigator.clipboard.writeText(colorInput.value);
+            //alert(`Copied color: ${colorInput.value}`);
+            console.log(colorInput.value);
+          } catch (err) {
+            console.error('Failed to copy text: ', err);
+          }
+        });
+
+        // Append the color input, wrapper, label, and copy button to the container
+        colorWrapper.appendChild(colorInput);
+        colorWrapper.appendChild(colorLabel);
+        colorWrapper.appendChild(copyButton);
+        colorPickerContainer.appendChild(colorWrapper);
+
+        // Add event listener to the color input
+        colorInput.addEventListener('input', () => {
+          colorWrapper.style.backgroundColor = colorInput.value;
+          colorLabel.textContent = colorInput.value;
+        });
+      }
+    }
+
+    generateButton.addEventListener('click', createColorPickers);
+    createColorPickers();
+    const pageColorPicker = document.getElementById("page-color-picker");
+      pageColorPicker.addEventListener("input", () => {
+        document.body.style.backgroundColor = pageColorPicker.value;
+      });
+
+    var headerColorPicker = document.getElementById("header-color-picker");
+      headerColorPicker.addEventListener("input",(e) =>{
+      var headerMain = document.getElementById("first-header");
+      var row_1 = document.getElementById("row1");
+      var column_1 = document.getElementById("column1");
+      console.log(row_1);
+      console.log(column_1);
+      headerMain.style.color = headerColorPicker.value;
+      row_1.style.color = headerColorPicker.value;
+      column_1.style.color = headerColorPicker.value;
+
+    });
+
+  </script>
+</body>
+</html>
